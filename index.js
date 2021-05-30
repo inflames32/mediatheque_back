@@ -1,24 +1,22 @@
 const express = require("express");
-const userRoutes = "./routes/user.routes";
 require("dotenv").config({ path: "./config/.env" });
 require("./config/db");
+
+const router = require("./app/routes/router");
+//const userRoutes = require("./app/routes/user.routes.js");
+//const albumRoutes = require("./app/routes/album.routes.js");
+
 const app = express();
+app.use(express.json());
 
-/* const mongoose = require("mongoose");
-
-mongoose.connect("mongodb://localhost:27017", {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-}); */
-
-const router = require("./app/router");
-//console.log(mongoose);
-
-const PORT = 5000;
 // routes
-app.use("/api/user", userRoutes);
+
 app.use(router);
+
+//app.use("/api/albums", albumsRoutes);
+
 // server
-app.listen(PORT, () => {
-  console.log("server up!");
+const Port = process.env.PORT || 5001;
+app.listen(Port, () => {
+  console.log(`listening on ${process.env.PORT}`);
 });
