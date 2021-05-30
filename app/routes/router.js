@@ -19,4 +19,7 @@ router.get("/test", (req, res) => {
 router.post("/api/register", authController.signUp);
 //router.get("/api/register", authController.signIn);
 
+// Album
+router.post("/api/album/add-album", albumController.addAlbum);
+
 module.exports = router;

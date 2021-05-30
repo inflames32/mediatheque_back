@@ -16,7 +16,7 @@ const albumController = {
       });
       res.status(200).json({ name: name._id });
     } catch (err) {
-      console.trace("error");
+      console.trace("error", err);
       res.status(500).json(err);
     }
   },

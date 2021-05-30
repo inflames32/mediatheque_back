@@ -16,7 +16,7 @@ const albumSchema = new mongoose.Schema({
   gencode: {
     type: Number,
     required: false,
-    unique: true,
+    unique: false,
     trim: true,
   },
   year: {
@@ -24,20 +24,19 @@ const albumSchema = new mongoose.Schema({
     required: false,
     minLength: 4,
     maxLength: 4,
-    unique: true,
+    unique: false,
     trim: true,
   },
   format: {
     type: String,
     required: false,
-
-    unique: true,
+    unique: false,
     trim: true,
   },
   style: {
     type: String,
     required: false,
-    unique: true,
+    unique: false,
     trim: true,
   },
 });
