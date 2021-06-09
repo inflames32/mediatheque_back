@@ -4,17 +4,13 @@ require("./config/db");
 const cors = require("cors");
 
 const router = require("./app/routes/router");
-//const userRoutes = require("./app/routes/user.routes.js");
-//const albumRoutes = require("./app/routes/album.routes.js");
 
 const app = express();
 app.use(express.json());
 app.use(cors());
+
 // routes
-
 app.use(router);
-
-//app.use("/api/albums", albumsRoutes);
 
 // server
 const Port = process.env.PORT || 5001;
