@@ -12,7 +12,7 @@ router.get("/", (req, res) => {
 });
 
 // User
-router.post("/api/register", authController.signUp);
+//router.post("/api/register", authController.signUp);
 //router.get("/api/register", authController.signIn);
 
 // Album
