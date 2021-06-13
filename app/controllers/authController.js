@@ -1,4 +1,4 @@
-const UserModel = require("../models/UserModel");
+//const authModel = require("../models/serModel");
 
 const authController = {
   signUp: async (req, res) => {
