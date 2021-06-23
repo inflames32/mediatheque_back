@@ -15,10 +15,11 @@ router.get("/", (req, res) => {
 //router.post("/api/register", authController.signUp);
 //router.get("/api/register", authController.signIn);
 
-// Album
+// Albums
 router.get("/api/albums", albumController.getAllAlbums);
 router.post("/api/albums/addAlbum", albumController.addAlbum);
-
+// Album
+router.get("/api/album/:name", albumController.getOneAlbum);
 router.get("/api/album/:id", albumController.getOneAlbumByID);
 router.delete("/api/album/:id", albumController.deleteAlbum);
 //router.put("/api/album/:id", albumController.updateAlbum);

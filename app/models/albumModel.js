@@ -7,9 +7,8 @@ const albumSchema = new mongoose.Schema({
   artist: {
     type: String,
   },
-  profil: {
+  cover: {
     type: String,
-    profil: "./images/jaquettes/undefined.png",
   },
   gencode: {
     type: Number,

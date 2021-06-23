@@ -13,6 +13,21 @@ const albumController = {
     }
   },
 
+  getOneAlbum: async (req, res) => {
+    try {
+      const albumName = req.params.name;
+      const album = await AlbumModel.findOne({
+        name: albumName,
+      });
+      res.json(album);
+    } catch (err) {
+      console.trace(err);
+      res.status(500).json({
+        message: "erreur",
+      });
+    }
+  },
+
   getOneAlbumByID: async (req, res) => {
     try {
       const albumID = req.params.id;
@@ -28,20 +43,20 @@ const albumController = {
 
   addAlbum: async (req, res) => {
     console.log(req.body);
-    const { name, artist, gencode, year, format, style } = req.body;
-
+    const { name, artist, cover, gencode, year, format, style } = req.body;
     try {
-      const album = await AlbumModel.create({
+      await AlbumModel.create({
         name,
         artist,
+        cover,
         gencode,
         year,
         format,
         style,
       });
-      res.status(200).json({ name: name._id });
-    } catch (err) {
-      return res.status(500).json({ message: err });
+      res.status(200).json("Successfully added");
+    } catch (error) {
+      return res.status(500).json(error);
     }
   },
 
@@ -51,8 +66,6 @@ const albumController = {
       await AlbumModel.deleteOne({
         _id: req.params.id,
       });
-
-      //.exec();
       res.status(200).json({ message: "Successfully deleted." });
     } catch (err) {
       return res.status(500).json({ message: err });
