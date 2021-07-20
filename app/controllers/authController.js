@@ -2,7 +2,6 @@
 
 const authController = {
   signUp: async (req, res) => {
-    console.log(req.body);
     const { pseudo, email, password } = req.body;
 
     try {

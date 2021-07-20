@@ -6,7 +6,7 @@ const albumController = {
       const albums = await AlbumModel.find();
       res.json(albums);
     } catch (err) {
-      console.trace(err);
+      console.log(err);
       res.status(500).json({
         message: "erreur",
       });
@@ -31,7 +31,6 @@ const albumController = {
   getOneAlbumByID: async (req, res) => {
     try {
       const albumID = req.params.id;
-      console.log(albumID);
       const album = await AlbumModel.findById({
         _id: albumID,
       });

@@ -1,5 +1,5 @@
 const UserModel = require("../models/userModel");
-const validator = require("email-validator");
+//const validator = require("email-validator");
 const bcrypt = require("bcrypt");
 
 const userController = {
@@ -15,17 +15,12 @@ const userController = {
     }
   },
 
-  signUp: async (req, res) => {
+  signup: async (req, res) => {
     const { email, password, password_validation } = req.body;
     const bodyErrors = [];
     const userExist = await UserModel.findOne({
-      where: {
-        email: req.body.email,
-      },
+      email: req.body.email,
     });
-    if (!email) {
-      bodyErrors.push("email cannot be empty");
-    }
     if (!password) {
       bodyErrors.push("password cannot be empty");
     }
@@ -41,7 +36,10 @@ const userController = {
     if (bodyErrors.length) {
       return res.status(400).json(bodyErrors);
     }
-    validator.validate(email);
+    if (!email) {
+      bodyErrors.push("email cannot be empty");
+    }
+    //validator.validate(email);
     if (userExist) {
       return res.status(500).json("email exist in the base");
     }
@@ -50,7 +48,9 @@ const userController = {
     try {
       await UserModel.create({
         email,
+        password,
         password: await bcrypt.hashSync(password, salt),
+        password_validation,
         password_validation: await bcrypt.hashSync(password_validation, salt),
       });
       //await newUser.save();
@@ -60,15 +60,18 @@ const userController = {
     }
   },
 
-  signIn: async (req, res) => {
+  login: async (req, res) => {
     try {
       const { email, password } = req.body;
-
-      const user = await User.findOne({
+      const user = await UserModel.findOne({
         email,
       });
 
-      if (user && (await bcrypt.compareSync(password, user.password))) {
+      if (
+        user &&
+        (await bcrypt.compareSync(password, user.password)) &&
+        user.verify
+      ) {
         req.session.user = user.get({
           plain: true,
         });
@@ -81,6 +84,18 @@ const userController = {
         res.json("error 401 unauthorized");
         res.status(401).end();
       }
+    } catch (error) {
+      console.trace(error);
+      res.status(500).json(error);
+    }
+  },
+
+  logout: async (req, res) => {
+    try {
+      req.session.destroy();
+      res.json({
+        logged: false,
+      });
     } catch (error) {
       console.trace(error);
       res.status(500).json(error);
