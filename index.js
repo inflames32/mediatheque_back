@@ -1,5 +1,5 @@
 const express = require("express");
-const bodyParser = require("body-parser");
+//const bodyParser = require("body-parser");
 
 require("dotenv").config({ path: "./config/.env" });
 require("./config/db");
@@ -13,13 +13,13 @@ app.use(express.json());
 
 const corsOptions = {
   credentials: true,
-  origin: process.env.URL_DB_PROD,
+  origin: process.env.URL_DB,
 };
 
 app.use(cors(corsOptions));
 
 app.use((req, res, next) => {
-  res.header("Access-Control-Allow-Origin", process.env.URL_DB_PROD);
+  res.header("Access-Control-Allow-Origin", process.env.URL_DB);
   res.header("Access-Control-Allow-Credentials", false);
   res.header(
     "Access-Control-Allow-Headers",
