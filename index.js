@@ -13,13 +13,13 @@ app.use(express.json());
 
 const corsOptions = {
   credentials: true,
-  origin: process.env.CLIENT_URL,
+  origin: process.env.URL_DB_PROD,
 };
 
 app.use(cors(corsOptions));
 
 app.use((req, res, next) => {
-  res.header("Access-Control-Allow-Origin", process.env.CLIENT_URL);
+  res.header("Access-Control-Allow-Origin", process.env.URL_DB_PROD);
   res.header("Access-Control-Allow-Credentials", false);
   res.header(
     "Access-Control-Allow-Headers",
