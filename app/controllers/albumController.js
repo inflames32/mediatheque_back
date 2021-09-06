@@ -41,10 +41,9 @@ const albumController = {
   },
 
   addAlbum: async (req, res) => {
-    console.log(req.body);
     const { name, artist, cover, gencode, year, format, style } = req.body;
     try {
-      await AlbumModel.create({
+      const album = await AlbumModel.create({
         name,
         artist,
         cover,
@@ -53,7 +52,10 @@ const albumController = {
         format,
         style,
       });
-      res.status(200).json("Successfully added");
+      res.status(200).json({
+        album: album._id,
+        name: album.name,
+      });
     } catch (error) {
       return res.status(500).json(error);
     }
@@ -65,6 +67,7 @@ const albumController = {
       await AlbumModel.deleteOne({
         _id: req.params.id,
       });
+      //res.status(200).json({ album: _id });
       res.status(200).json({ message: "Successfully deleted." });
     } catch (err) {
       return res.status(500).json({ message: err });

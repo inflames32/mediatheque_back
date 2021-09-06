@@ -11,20 +11,20 @@ router.get("/", (req, res) => {
   res.sendFile(path.join(__dirname + "/index.html"));
 });
 // Login
-router.post("/api/login", userController.login);
+router.post("/login", userController.login);
 
 // User
-router.post("/api/register", userController.signup);
+router.post("/signup", userController.signup);
 //router.route("api/user/:id").get(userController.getOneUser);
 //.delete(userController.deleteUser);
 
 // List of albums
-router.get("/api/albums", albumController.getAllAlbums);
-router.post("/api/albums/addAlbum", albumController.addAlbum);
+router.get("/albums", albumController.getAllAlbums);
+router.post("/albums/addAlbum", albumController.addAlbum);
 
 // One album
 //router.get("/api/album/:name", albumController.getOneAlbum);
-router.get("/api/album/:id", albumController.getOneAlbumByID);
-router.delete("/api/album/:id", albumController.deleteAlbum);
+router.get("/album/:id", albumController.getOneAlbumByID);
+router.delete("/album/:id", albumController.deleteAlbum);
 
 module.exports = router;

@@ -1,9 +1,10 @@
 const UserModel = require("../models/userModel");
+
 //const validator = require("email-validator");
 const bcrypt = require("bcrypt");
 
 const userController = {
-  getOneUser: async (req, res) => {
+  /*  getOneUser: async (req, res) => {
     try {
       const userId = req.params._id;
       const user = await UserModel.findById({
@@ -13,80 +14,58 @@ const userController = {
     } catch (err) {
       return res.status(500).json({ message: err });
     }
-  },
+  }, */
 
   signup: async (req, res) => {
-    const { email, password, password_validation } = req.body;
-    const bodyErrors = [];
-    const userExist = await UserModel.findOne({
-      email: req.body.email,
-    });
-    if (!password) {
-      bodyErrors.push("password cannot be empty");
-    }
-    if (!password_validation) {
-      bodyErrors.push("password confirmation cannot be empty");
-    }
-    if (password !== password_validation) {
-      bodyErrors.push("passwords must be the same");
-    }
-    if (userExist) {
-      bodyErrors.push("this e-mail is already registered");
-    }
-    if (bodyErrors.length) {
-      return res.status(400).json(bodyErrors);
-    }
-    if (!email) {
-      bodyErrors.push("email cannot be empty");
-    }
-    //validator.validate(email);
-    if (userExist) {
-      return res.status(500).json("email exist in the base");
-    }
-    const saltCrypt = 10;
-    const salt = await bcrypt.genSaltSync(saltCrypt);
     try {
+      const { email, password, password_validation } = req.body;
+      const bodyErrors = [];
+      if (password != password_validation) {
+        bodyErrors.push("les mots de passes sont différents");
+      }
+      if (!email) {
+        bodyErrors.push("no email");
+      }
+      if (bodyErrors.length) {
+        res.json(bodyErrors);
+        return res.status(400);
+      }
+
       await UserModel.create({
         email,
-        password,
-        password: await bcrypt.hashSync(password, salt),
-        password_validation,
-        password_validation: await bcrypt.hashSync(password_validation, salt),
+        password: await bcrypt.hash(password, 10),
       });
-      //await newUser.save();
-      res.status(200).json(res.data);
-    } catch (error) {
-      return res.status(500).json(error);
+
+      await newUser.save();
+
+      res.json({ newUser: user._id });
+    } catch (err) {
+      if (err.code === 11000) {
+        console.log(`L'email existe déjà`); // TODO gérer l'email existe déjà
+      }
+      res.json(err);
     }
   },
 
   login: async (req, res) => {
-    try {
-      const { email, password } = req.body;
-      const user = await UserModel.findOne({
-        email,
-      });
+    const { email, password } = req.body;
 
-      if (
-        user &&
-        (await bcrypt.compareSync(password, user.password)) &&
-        user.verify
-      ) {
-        req.session.user = user.get({
-          plain: true,
-        });
-        delete req.session.user.password;
-        res.json({
-          logged: true,
-          info: req.session.user,
-        });
-      } else {
-        res.json("error 401 unauthorized");
-        res.status(401).end();
-      }
+    try {
+      await UserModel.findOne({ email }, (err, result) => {
+        if (err) {
+          res.send(err);
+        } else if (bcrypt.compareSync(password, result.password)) {
+          delete req.body;
+          res.json({
+            result: { _id: result._id, email: result.email },
+            logged: true,
+          });
+        } else {
+          res.send({ message: "Mot de passe erroné" });
+        }
+      });
     } catch (error) {
-      console.trace(error);
-      res.status(500).json(error);
+      res.status(202).json(error);
     }
   },
 

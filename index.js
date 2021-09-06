@@ -1,4 +1,5 @@
 const express = require("express");
+const bodyParser = require("body-parser");
 
 require("dotenv").config({ path: "./config/.env" });
 require("./config/db");
@@ -7,17 +8,20 @@ const router = require("./app/routes/router");
 
 const app = express();
 app.use(express.json());
+//app.use(bodyParser.json());
+//app.use(bodyParser.urlencoded({ extended: true }));
 
 const corsOptions = {
   credentials: true,
-  origin: process.env.CLIENT_URL,
+  //origin: process.env.CLIENT_URL,
+  origin: "http://localhost:3000",
 };
 
 app.use(cors(corsOptions));
 
 app.use((req, res, next) => {
   res.header("Access-Control-Allow-Origin", process.env.CLIENT_URL);
-  res.header("Access-Control-Allow-Credentials", true);
+  res.header("Access-Control-Allow-Credentials", false);
   res.header(
     "Access-Control-Allow-Headers",
     "Origin, X-Requested-With, Content-Type, Accept"

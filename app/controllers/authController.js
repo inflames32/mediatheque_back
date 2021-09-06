@@ -1,5 +1,3 @@
-//const authModel = require("../models/serModel");
-
 const authController = {
   signUp: async (req, res) => {
     const { pseudo, email, password } = req.body;
