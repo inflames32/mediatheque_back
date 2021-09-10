@@ -4,7 +4,7 @@ const UserModel = require("../models/userModel");
 const bcrypt = require("bcrypt");
 
 const userController = {
-  /*  getOneUser: async (req, res) => {
+  getOneUser: async (req, res) => {
     try {
       const userId = req.params._id;
       const user = await UserModel.findById({
@@ -14,7 +14,7 @@ const userController = {
     } catch (err) {
       return res.status(500).json({ message: err });
     }
-  }, */
+  },
 
   signup: async (req, res) => {
     try {
@@ -49,16 +49,26 @@ const userController = {
 
   login: async (req, res) => {
     const { email, password } = req.body;
-
+    const bodyErrors = [];
     try {
+      if (!email) {
+        bodyErrors.push("no email");
+      }
+      if (!password) {
+        bodyErrors.push("no email");
+      }
+      if (bodyErrors.length) {
+        res.json(bodyErrors);
+        return res.status(400);
+      }
+
       await UserModel.findOne({ email }, (err, result) => {
         if (err) {
           res.send(err);
         } else if (bcrypt.compareSync(password, result.password)) {
           delete req.body;
           res.json({
-            result: { _id: result._id, email: result.email },
-            logged: true,
+            result: { _id: result._id, email: result.email, logged: true },
           });
         } else {
           res.send({ message: "Mot de passe erroné" });

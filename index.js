@@ -31,7 +31,7 @@ app.use((req, res, next) => {
 
 // delete on prod
 
-//app.set("trust proxy", 1);
+app.set("trust proxy", 1);
 
 // routes
 app.use(router);
