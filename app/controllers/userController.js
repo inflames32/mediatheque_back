@@ -17,23 +17,32 @@ const userController = {
   },
 
   signup: async (req, res) => {
+    const { email, password, password_validation } = req.body;
+    console.log(req.body);
     try {
-      const { email, password, password_validation } = req.body;
       const bodyErrors = [];
       if (password != password_validation) {
-        bodyErrors.push("les mots de passes sont différents");
+        bodyErrors.push(" les mots de passes sont différents");
       }
       if (!email) {
-        bodyErrors.push("no email");
+        bodyErrors.push(" enter a valid email");
+      }
+      if (!password) {
+        bodyErrors.push(" enter a password");
+      }
+      if (!password_validation) {
+        bodyErrors.push(" reenter your password");
       }
       if (bodyErrors.length) {
         res.json(bodyErrors);
         return res.status(400);
       }
+      const saltRound = 10;
+      const salt = await bcrypt.genSaltSync(saltRound);
 
       await UserModel.create({
         email,
-        password: await bcrypt.hash(password, 10),
+        password: await bcrypt.hash(password, salt),
       });
 
       await newUser.save();
@@ -49,45 +58,37 @@ const userController = {
 
   login: async (req, res) => {
     const { email, password } = req.body;
-    const bodyErrors = [];
+    console.log(req.body);
     try {
-      if (!email) {
-        bodyErrors.push("no email");
+      const bodyErrors = [];
+      if (!email && !password) {
+        bodyErrors.push("fields are missing!");
       }
       if (!password) {
-        bodyErrors.push("no email");
+        bodyErrors.push("enter a password");
       }
       if (bodyErrors.length) {
         res.json(bodyErrors);
         return res.status(400);
       }
-
-      await UserModel.findOne({ email }, (err, result) => {
-        if (err) {
-          res.send(err);
-        } else if (bcrypt.compareSync(password, result.password)) {
-          delete req.body;
-          res.json({
-            result: { _id: result._id, email: result.email, logged: true },
-          });
-        } else {
-          res.send({ message: "Mot de passe erroné" });
-        }
-      });
-    } catch (error) {
-      res.status(202).json(error);
-    }
-  },
-
-  logout: async (req, res) => {
-    try {
-      req.session.destroy();
-      res.json({
-        logged: false,
-      });
-    } catch (error) {
+      const user = await UserModel.findOne({ email });
+      if (user && bcrypt.compareSync(password, user.password)) {
+        delete req.body;
+        res.json({
+          userId: user._id,
+          message: "vous êtes authentifié",
+          logged: true,
+        });
+      } else {
+        res.json({
+          message: "ERROR 401 UNAUTHORIZED",
+          logged: false,
+        });
+        res.status(401).end();
+      }
+    } catch (err) {
       console.trace(error);
-      res.status(500).json(error);
+      res.json(err);
     }
   },
 };
