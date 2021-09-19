@@ -30,12 +30,34 @@ const albumController = {
 
   getOneAlbumByID: async (req, res) => {
     try {
-      const albumID = req.params.id;
-      const album = await AlbumModel.findById({
-        _id: albumID,
-      });
-      res.json(album);
+      const id = req.params.id;
+
+      const album = await AlbumModel.findById({ id });
+      if (album) {
+        console.log(album);
+        res.json({
+          album,
+        });
+      } else {
+        res.json({
+          message: "Album introuvable",
+        });
+        return;
+      }
     } catch (err) {
+      /*  console.log(album);
+      if (album) {
+        res.json({
+          id: album._id,
+          cover: album.cover,
+          artist: album.artist,
+          name: album.name,
+          gencode: album.gencode,
+          year: album.year,
+          style: album.style,
+          format: album.format,
+        });
+      } */
       return res.status(500).json({ message: err });
     }
   },
@@ -68,7 +90,7 @@ const albumController = {
       await AlbumModel.deleteOne({
         _id: req.params.id,
       });
-      //res.status(200).json({ album: _id });
+
       res.status(200).json({ message: "Successfully deleted." });
     } catch (err) {
       return res.status(500).json({ message: err });

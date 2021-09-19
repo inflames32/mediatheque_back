@@ -25,13 +25,13 @@ const userController = {
         bodyErrors.push(" les mots de passes sont différents");
       }
       if (!email) {
-        bodyErrors.push(" enter a valid email");
+        bodyErrors.push(" Entrez un email valide");
       }
       if (!password) {
-        bodyErrors.push(" enter a password");
+        bodyErrors.push("Entrez votre mot de passe");
       }
       if (!password_validation) {
-        bodyErrors.push(" reenter your password");
+        bodyErrors.push("Ré-entrez votre mot de passe");
       }
       if (bodyErrors.length) {
         res.json(bodyErrors);
@@ -62,10 +62,10 @@ const userController = {
     try {
       const bodyErrors = [];
       if (!email && !password) {
-        bodyErrors.push("fields are missing!");
+        bodyErrors.push("Un/des champ(s) est/sont vide(s)");
       }
       if (!password) {
-        bodyErrors.push("enter a password");
+        bodyErrors.push("Entrez votre mot de passe");
       }
       if (bodyErrors.length) {
         res.json(bodyErrors);
@@ -74,14 +74,10 @@ const userController = {
       const user = await UserModel.findOne({ email });
       if (user && bcrypt.compareSync(password, user.password)) {
         delete req.body;
-        res.json({
-          userId: user._id,
-          message: "vous êtes authentifié",
-          logged: true,
-        });
+        res.json({ _id: user._id, email: user.email, logged: true });
       } else {
         res.json({
-          message: "ERROR 401 UNAUTHORIZED",
+          message: "Erreur d'authentification",
           logged: false,
         });
         res.status(401).end();
