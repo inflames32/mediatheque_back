@@ -24,7 +24,7 @@ router.post("/albums/addAlbum", albumController.addAlbum);
 
 // One album
 //router.get("/api/album/:name", albumController.getOneAlbum);
-router.get("/album/:id", albumController.getOneAlbumByID);
+router.get("/album/:id", albumController.getAlbumByID);
 router.delete("/album/:id", albumController.deleteAlbum);
 
 module.exports = router;

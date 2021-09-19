@@ -4,7 +4,7 @@ const UserModel = require("../models/userModel");
 const bcrypt = require("bcrypt");
 
 const userController = {
-  getOneUser: async (req, res) => {
+  /*   getOneUser: async (req, res) => {
     try {
       const userId = req.params._id;
       const user = await UserModel.findById({
@@ -14,7 +14,7 @@ const userController = {
     } catch (err) {
       return res.status(500).json({ message: err });
     }
-  },
+  }, */
 
   signup: async (req, res) => {
     const { email, password, password_validation } = req.body;

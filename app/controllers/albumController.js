@@ -4,11 +4,12 @@ const albumController = {
   getAllAlbums: async (req, res) => {
     try {
       const albums = await AlbumModel.find();
+      console.log(albums);
       res.json(albums);
     } catch (err) {
       console.log(err);
       res.status(500).json({
-        message: "erreur",
+        message: "erreur de récupération des albums",
       });
     }
   },
@@ -28,37 +29,16 @@ const albumController = {
     }
   },
 
-  getOneAlbumByID: async (req, res) => {
+  getAlbumByID: async (req, res) => {
     try {
-      const id = req.params.id;
-
-      const album = await AlbumModel.findById({ id });
-      if (album) {
-        console.log(album);
-        res.json({
-          album,
-        });
-      } else {
-        res.json({
-          message: "Album introuvable",
-        });
-        return;
-      }
+      await AlbumModel.findById(req.params.id, (err, docs) => {
+        if (!err) {
+          res.json({ docs });
+        }
+      });
     } catch (err) {
-      /*  console.log(album);
-      if (album) {
-        res.json({
-          id: album._id,
-          cover: album.cover,
-          artist: album.artist,
-          name: album.name,
-          gencode: album.gencode,
-          year: album.year,
-          style: album.style,
-          format: album.format,
-        });
-      } */
-      return res.status(500).json({ message: err });
+      console.log(err);
+      res.status(500).json({ message: err });
     }
   },
 
