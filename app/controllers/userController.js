@@ -18,7 +18,7 @@ const userController = {
 
   signup: async (req, res) => {
     const { email, password, password_validation } = req.body;
-    console.log(req.body);
+
     try {
       const bodyErrors = [];
       if (password != password_validation) {
@@ -58,7 +58,7 @@ const userController = {
 
   login: async (req, res) => {
     const { email, password } = req.body;
-    console.log(req.body);
+
     try {
       const bodyErrors = [];
       if (!email && !password) {

@@ -64,7 +64,7 @@ const albumController = {
 
   addAlbum: async (req, res) => {
     const { name, artist, cover, gencode, year, format, style } = req.body;
-    console.log(req.body);
+
     try {
       const album = await AlbumModel.create({
         name,
