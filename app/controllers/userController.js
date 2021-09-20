@@ -56,7 +56,7 @@ const userController = {
     }
   },
 
-  login: async (req, res) => {
+/*   login: async (req, res) => {
     const { email, password } = req.body;
     console.log(req.body);
     try {
@@ -84,6 +84,42 @@ const userController = {
       }
     } catch (err) {
       console.trace(error);
+      res.json(err);
+    }
+  }, */
+  login: async (req, res) => {
+        console.log('email + mdp', req.body);
+        const {email, password} = req.body;
+    try {
+      const bodyErrors = [];
+      if (!email && !password) {
+        bodyErrors.push("Un/des champ(s) est/sont vide(s)");
+      }
+      if (!password) {
+        bodyErrors.push("Entrez votre mot de passe");
+      }
+      if (bodyErrors.length) {
+        res.json(bodyErrors);
+        return res.status(400);
+      }
+      await UserModel.findOne( {email}, (err, docs)=>{
+      if(!err && ( email && bcrypt.compareSync(password, docs.password))) {
+          console.log('ici', docs);
+        delete req.body;        
+        res.json({ 
+          _id: docs._id, 
+          email: docs.email, 
+          logged: true });
+      } else {
+        res.json({
+          message: "Erreur d'authentification",
+          logged: false,
+        });
+        res.status(401).end();
+      }
+      });      
+    } catch (err) {
+      console.trace(err);
       res.json(err);
     }
   },

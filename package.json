@@ -6,6 +6,7 @@
     "dotenv": "^10.0.0",
     "email-validator": "^2.0.4",
     "express": "^4.17.1",
+    "heroku": "^7.59.0",
     "heroku-cli": "^7.0.9",
     "mongoose": "^5.12.11",
     "nodemon": "^2.0.7",
