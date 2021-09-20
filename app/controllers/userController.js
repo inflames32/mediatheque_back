@@ -58,7 +58,7 @@ const userController = {
 
   login: async (req, res) => {
     const { email, password } = req.body;
-
+    console.log(req.body);
     try {
       const bodyErrors = [];
       if (!email && !password) {
@@ -87,6 +87,22 @@ const userController = {
       res.json(err);
     }
   },
+
+  deleteUser: async(req, res) =>{
+    try {     
+      const user = await UserModel.findOne(req.params.body, (err, data)=> {
+        if(!err) {
+          delete user;
+        }
+        res.json({
+          message: "L'utilisateur a été effacé",
+        })
+      })
+    }
+    catch(err) {
+      console.log(err);
+    }
+  }
 };
 
 module.exports = userController;

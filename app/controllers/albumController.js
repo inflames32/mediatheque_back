@@ -31,9 +31,11 @@ const albumController = {
 
   getAlbumByID: async (req, res) => {
     try {
-      await AlbumModel.findById(req.params.id, (err, docs) => {
+      await AlbumModel.findById(req.params.body, (err, docs) => {
         if (!err) {
           res.json({ docs });
+        } else {
+          console.log(err);
         }
       });
     } catch (err) {
@@ -74,6 +76,21 @@ const albumController = {
       res.status(200).json({ message: "Successfully deleted." });
     } catch (err) {
       return res.status(500).json({ message: err });
+    }
+  },
+
+  getMyListAlbums: async (req, res) => {
+    const userId = req.params.body;
+    console.log(userId);
+    try {
+      const albums = await AlbumModel.find();
+      console.log(albums);
+      res.json(albums);
+    } catch (err) {
+      console.log(err);
+      res.status(500).json({
+        message: "erreur de récupération des albums",
+      });
     }
   },
 };
