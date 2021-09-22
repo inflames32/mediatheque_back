@@ -30,10 +30,13 @@ const albumController = {
   },
 
   getAlbumByID: async (req, res) => {
+    const id = req.params.id.replace(':', "");    
+    console.log(id);
     try {
-      await AlbumModel.findById(req.params.body, (err, docs) => {
+      await AlbumModel.findById(id, (err, docs) => {
+        console.log(docs);
         if (!err) {
-          res.json({ docs });
+          res.json(docs);
         } else {
           console.log(err);
         }
@@ -67,13 +70,31 @@ const albumController = {
   },
 
   deleteAlbum: async (req, res) => {
-    console.log(req.params);
+    const id = req.params.id.replace(':',"");    
     try {
-      await AlbumModel.deleteOne({
-        _id: req.params.id,
-      });
+      await AlbumModel.findOneAndRemove(
+        {
+          _id: id,
+        },
+        (err, docs) => {                 
+          if (!err) {
+            console.log('ici', docs);
+            delete docs
+            res.status(200).json({ message: "Successfully deleted." });
+          }
+          else if(err){
+            console.log(err);
+            res.json({err});
+          }  
+          else{
+            res.json({
+              message: "album introuva ble"
+            })
+          }
+        }
+      );
 
-      res.status(200).json({ message: "Successfully deleted." });
+      
     } catch (err) {
       return res.status(500).json({ message: err });
     }
@@ -96,3 +117,14 @@ const albumController = {
 };
 
 module.exports = albumController;
+
+// collection user
+// const { albumPossédé } = await tacollection.getOne({ _id: iduser })
+// getOneAlbum(id)
+// {
+//  id: 'sonid'
+//  name: 'toto',
+//  albumPossédé : [
+//    'idalbum1', 'idalbum2'
+//  ]
+// }
