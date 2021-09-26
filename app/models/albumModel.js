@@ -24,6 +24,9 @@ const albumSchema = new mongoose.Schema({
   style: {
     type: String,
   },
+  userId: {
+    type: String,
+  },
 });
 
 const AlbumModel = mongoose.model("album", albumSchema);

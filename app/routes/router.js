@@ -1,10 +1,8 @@
-const express = require("express");
+const router = require("express").Router();
 
 const albumController = require("../controllers/albumController");
 const userController = require("../controllers/userController");
 const path = require("path");
-
-const router = express.Router();
 
 //Index
 router.get("/", (req, res) => {
@@ -16,12 +14,16 @@ router.post("/login", userController.login);
 // User
 router.post("/signup", userController.signup);
 router.get("/user/:id/", userController.login);
-router.delete("delete/user/:id", userController.deleteUser);
+router.delete("/user/:id", userController.deleteUser);
 
 // List of albums
 router.get("/albums", albumController.getAllAlbums);
 router.post("/albums/addAlbum", albumController.addAlbum);
-router.get("/user/:id/my-albums", albumController.getMyListAlbums);
+
+// List of albums user
+router.post("/user/:id/mes-albums/add-album", albumController.addAlbumToMyList);
+router.get("/user/:id/mes-albums", albumController.getAlbumsList);
+
 // One album
 //router.get("/api/album/:name", albumController.getOneAlbum);
 router.get("/album/:id", albumController.getAlbumByID);

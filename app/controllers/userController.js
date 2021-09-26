@@ -1,4 +1,5 @@
 const UserModel = require("../models/userModel");
+const AlbumModel = require('../models/albumModel');
 
 //const validator = require("email-validator");
 const bcrypt = require("bcrypt");
@@ -56,8 +57,7 @@ const userController = {
     }
   },
 
-  login: async (req, res) => {
-        console.log('email + mdp', req.body);
+  login: async (req, res) => {       
         const {email, password} = req.body;
     try {
       const bodyErrors = [];
@@ -74,7 +74,7 @@ const userController = {
       await UserModel.findOne( {email}, (err, docs)=>{
       
        if(!err && ( email && bcrypt.compareSync(password, docs.password))) {
-          console.log('ici', docs);
+          
         delete req.body;        
         res.json({ 
           _id: docs._id, 
@@ -95,12 +95,14 @@ const userController = {
   },
 
   deleteUser: async(req, res) =>{
+    
+    const id = req.params.id.replace(':',"");  
     try {     
-      const user = await UserModel.findOne(req.params.body, (err, data)=> {
+      const user = await UserModel.findOne(id, (err, data)=> {
         if(!err) {
           delete user;
         }
-        res.json({
+        res.json({data, 
           message: "L'utilisateur a été effacé",
         })
       })
@@ -108,7 +110,9 @@ const userController = {
     catch(err) {
       console.log(err);
     }
-  }
+  },
+
+
 };
 
 module.exports = userController;
