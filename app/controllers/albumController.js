@@ -7,10 +7,10 @@ const albumController = {
   getAllAlbums: async (req, res) => {
     try {
       const albums = await AlbumModel.find();
-      console.log(albums);
+     
       res.json(albums);
     } catch (err) {
-      console.log(err);
+      
       res.status(500).json({
         message: "erreur de récupération des albums",
       });
@@ -38,15 +38,13 @@ const albumController = {
     
     try {
       await AlbumModel.findById(id, (err, docs) => {
-        console.log(docs);
+    
         if (!err) {
           res.json(docs);
-        } else {
-          console.log(err);
         }
       });
     } catch (err) {
-      console.log(err);
+ 
       res.status(500).json({ message: err });
     }
   },
@@ -56,37 +54,16 @@ const albumController = {
     const _id = req.params.id;
     try {
      const list =await AlbumModel.find({userId:{$eq:_id}});    
-     console.log(list); 
+    
         res.json(list);      
                      } catch (err) {
-      console.log(err);
+   
       res.status(500).json({
         message: "erreur de récupération des albums",
       });
     }
   },
-  /* getAlbumsList: async (req, res) => {    
-    const _id = req.params.id;
-    try {
-     await AlbumModel.find( {userId: _id}, (err, docs) => {
-       if(!err){
-         console.log(docs);
-         res.status(200).json({
-           docs
-         })
-       }
-       else{
-         console.log(err);
-    }
-  });     
-    } catch (err) {
-      console.log(err);
-      res.status(500).json({
-        message: "erreur de récupération des albums",
-      });
-    }
-  }, */
-
+  
   //ajouter un album public
   addAlbum: async (req, res) => {
     const { name, artist, cover, gencode, year, format, style } = req.body;
@@ -115,7 +92,7 @@ const albumController = {
 addAlbumToMyList: async (req, res)=>{   
   const { name, artist, cover, gencode, year, format, style } = req.body;
   const _id = req.params.id;
-console.log(_id);
+
  
   try {
      const album = await AlbumModel.create({
@@ -147,12 +124,12 @@ catch (error) {
         },
         (err, docs) => {                 
           if (!err) {
-            console.log('ici', docs);
+        
             delete docs
             res.status(200).json({ message: "Successfully deleted." });
           }
           else if(err){
-            console.log(err);
+         
             res.json({err});
           }  
           else{
@@ -173,13 +150,3 @@ catch (error) {
 
 module.exports = albumController;
 
-// collection user
-// const { albumPossédé } = await tacollection.getOne({ _id: iduser })
-// getOneAlbum(id)
-// {
-//  id: 'sonid'
-//  name: 'toto',
-//  albumPossédé : [
-//    'idalbum1', 'idalbum2'
-//  ]
-// }

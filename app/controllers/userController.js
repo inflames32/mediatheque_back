@@ -40,20 +40,19 @@ const userController = {
       }
       const saltRound = 10;
       const salt = await bcrypt.genSaltSync(saltRound);
-
-      await UserModel.create({
+        const user = await UserModel.create({
         email,
         password: await bcrypt.hash(password, salt),
       });
-
-      await newUser.save();
-
-      res.json({ newUser: user._id });
-    } catch (err) {
-      if (err.code === 11000) {
-        console.log(`L'email existe déjà`); // TODO gérer l'email existe déjà
-      }
-      res.json(err);
+      await user.save();
+      res.json({ 
+        user,
+        successMessage: 'Compte crée avec succèss !'
+      });
+ 
+    } catch (err) {      
+      res.json({
+        errorMessage: 'Erreur lors de la création du compte, veuillez réessayer !'});
     }
   },
 
@@ -71,8 +70,7 @@ const userController = {
         res.json(bodyErrors);
         return res.status(400);
       }
-      await UserModel.findOne( {email}, (err, docs)=>{
-      
+      await UserModel.findOne( {email}, (err, docs)=>{      
        if(!err && email && (bcrypt.compareSync(password, docs.password))) {
           
         delete req.body;        
@@ -108,7 +106,7 @@ const userController = {
       })
     }
     catch(err) {
-      console.log(err);
+      
     }
   },
 
