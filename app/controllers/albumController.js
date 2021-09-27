@@ -35,7 +35,7 @@ const albumController = {
   //récupérer un albbum avec son id
   getAlbumByID: async (req, res) => {
     const id = req.params.id.replace(':', "");    
-    console.log(id);
+    
     try {
       await AlbumModel.findById(id, (err, docs) => {
         console.log(docs);
@@ -55,10 +55,25 @@ const albumController = {
   getAlbumsList: async (req, res) => {    
     const _id = req.params.id;
     try {
+     const list =await AlbumModel.find({userId:{$eq:_id}});    
+     console.log(list); 
+        res.json(list);      
+                     } catch (err) {
+      console.log(err);
+      res.status(500).json({
+        message: "erreur de récupération des albums",
+      });
+    }
+  },
+  /* getAlbumsList: async (req, res) => {    
+    const _id = req.params.id;
+    try {
      await AlbumModel.find( {userId: _id}, (err, docs) => {
        if(!err){
          console.log(docs);
-         return docs;
+         res.status(200).json({
+           docs
+         })
        }
        else{
          console.log(err);
@@ -70,7 +85,7 @@ const albumController = {
         message: "erreur de récupération des albums",
       });
     }
-  },
+  }, */
 
   //ajouter un album public
   addAlbum: async (req, res) => {

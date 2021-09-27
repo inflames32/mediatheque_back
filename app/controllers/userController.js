@@ -73,7 +73,7 @@ const userController = {
       }
       await UserModel.findOne( {email}, (err, docs)=>{
       
-       if(!err && ( email && bcrypt.compareSync(password, docs.password))) {
+       if(!err && email && (bcrypt.compareSync(password, docs.password))) {
           
         delete req.body;        
         res.json({ 
