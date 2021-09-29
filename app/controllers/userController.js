@@ -73,7 +73,7 @@ const userController = {
           return res.status(404).json("Cant find user with email " + email);
         }   
        if(!err && email && (bcrypt.compareSync(password, docs.password))) {
-          console.log(docs);
+          
         delete req.body;        
         res.json({ 
           _id: docs._id, 
