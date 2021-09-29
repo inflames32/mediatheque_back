@@ -77,7 +77,6 @@ const albumController = {
         format,
         style,
         listAlbums:[]
-
       });
       res.status(200).json({
         album: album._id,

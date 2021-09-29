@@ -43,13 +43,11 @@ const userController = {
         const user = await UserModel.create({
         email,
         password: await bcrypt.hash(password, salt),
-      });
+      });      
       await user.save();
-      res.json({ 
-        user,
-        successMessage: 'Compte crée avec succèss !'
-      });
- 
+      delete req.body;
+      console.log(res.json);
+      res.json(); 
     } catch (err) {      
       res.json({
         errorMessage: 'Erreur lors de la création du compte, veuillez réessayer !'});
@@ -71,8 +69,11 @@ const userController = {
         return res.status(400);
       }
       await UserModel.findOne( {email}, (err, docs)=>{      
+        if(!email){
+          return res.status(404).json("Cant find user with email " + email);
+        }   
        if(!err && email && (bcrypt.compareSync(password, docs.password))) {
-          
+          console.log(docs);
         delete req.body;        
         res.json({ 
           _id: docs._id, 
@@ -96,21 +97,23 @@ const userController = {
     
     const id = req.params.id.replace(':',"");  
     try {     
-      const user = await UserModel.findOne(id, (err, data)=> {
-        if(!err) {
-          delete user;
-        }
-        res.json({data, 
+      const user = await UserModel.findByIdAndRemove(id);
+      console.log(user);
+        if(!user){
+          return res.status(404).json("Cant find user with id " + id);
+        }                        
+           
+      await delete user;
+      
+        res.json({ 
           message: "L'utilisateur a été effacé",
         })
-      })
-    }
-    catch(err) {
-      
+     }
+     catch(err) {
+      console.trace(err);
+      res.status(500).json(err);
     }
   },
-
-
 };
 
 module.exports = userController;
