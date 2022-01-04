@@ -28,15 +28,15 @@ app.use((req, res, next) => {
 
 // delete on prod
 
-app.set("trust proxy", 1); // trust first proxy
-app.use(
+//app.set("trust proxy", 1); // trust first proxy
+/* app.use(
   session({
     secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: true,
     cookie: { secure: true },
   })
-);
+); */
 
 // routes
 app.use(router);
