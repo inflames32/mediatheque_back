@@ -35,7 +35,7 @@ const albumController = {
   //récupérer un albbum avec son id
   getAlbumByID: async (req, res) => {
     const id = req.params.id.replace(':', "");    
-    
+    console.log(id);
     try {
       await AlbumModel.findById(id, (err, docs) => {
     

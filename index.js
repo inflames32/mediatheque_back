@@ -1,5 +1,5 @@
 const express = require("express");
-//const bodyParser = require("body-parser");
+const session = require("express-session");
 
 require("dotenv").config({ path: "./config/.env" });
 require("./config/db");
@@ -28,7 +28,15 @@ app.use((req, res, next) => {
 
 // delete on prod
 
-app.set("trust proxy", 1);
+app.set("trust proxy", 1); // trust first proxy
+app.use(
+  session({
+    secret: process.env.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: true,
+    cookie: { secure: true },
+  })
+);
 
 // routes
 app.use(router);
