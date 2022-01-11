@@ -14,7 +14,7 @@ router.post("/login", userController.login);
 // User
 router.post("/signup", userController.signup);
 router.get("/user/:id/", userController.login);
-router.delete("/user/:id/supprimer-mon-compte", userController.deleteUser);
+router.delete("/user/:id/delete_my_account", userController.deleteUser);
 
 // List of albums
 router.get("/albums", albumController.getAllAlbums);

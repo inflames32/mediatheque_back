@@ -1,26 +1,23 @@
-const AlbumModel = require("../models/albumModel");
-const UserModel = require('../models/userModel');
-
+const Album = require("../models/albumModel");
+const UserModel = require("../models/userModel");
 
 const albumController = {
   // récupérer tous les albums publics
   getAllAlbums: async (req, res) => {
     try {
-      const albums = await AlbumModel.find();
-     
-      res.json(albums);
+      const albums = await Album.find();
+      res.status(200).json(albums);
     } catch (err) {
-      
       res.status(500).json({
         message: "erreur de récupération des albums",
       });
     }
   },
-  // récupérer les infos d'un album 
+  // récupérer les infos d'un album
   getOneAlbum: async (req, res) => {
     try {
       const albumName = req.params.name;
-      const album = await AlbumModel.findOne({
+      const album = await Album.findOne({
         name: albumName,
       });
       res.json(album);
@@ -32,43 +29,40 @@ const albumController = {
     }
   },
 
-  //récupérer un albbum avec son id
+  //récupérer un album avec son id
   getAlbumByID: async (req, res) => {
-    const id = req.params.id.replace(':', "");    
+    const id = req.params.id.replace(":", "");
     console.log(id);
     try {
-      await AlbumModel.findById(id, (err, docs) => {
-    
+      await Album.findById(id, (err, docs) => {
         if (!err) {
           res.json(docs);
         }
       });
     } catch (err) {
- 
       res.status(500).json({ message: err });
     }
   },
 
   // récupérer la liste des albums de l'utilisateur
-  getAlbumsList: async (req, res) => {    
+  getAlbumsList: async (req, res) => {
     const _id = req.params.id;
     try {
-     const list =await AlbumModel.find({userId:{$eq:_id}});    
-    
-        res.json(list);      
-                     } catch (err) {
-   
+      const list = await Album.find({ userId: { $eq: _id } });
+      res.json(list);
+      console.log(list);
+    } catch (err) {
       res.status(500).json({
         message: "erreur de récupération des albums",
       });
     }
   },
-  
+
   //ajouter un album public
   addAlbum: async (req, res) => {
     const { name, artist, cover, gencode, year, format, style } = req.body;
     try {
-      const album = await AlbumModel.create({
+      const album = await Album.create({
         name,
         artist,
         cover,
@@ -76,7 +70,7 @@ const albumController = {
         year,
         format,
         style,
-        listAlbums:[]
+        listAlbums: [],
       });
       res.status(200).json({
         album: album._id,
@@ -87,65 +81,54 @@ const albumController = {
     }
   },
 
-  
-addAlbumToMyList: async (req, res)=>{   
-  const { name, artist, cover, gencode, year, format, style } = req.body;
-  const _id = req.params.id;
+  addAlbumToMyList: async (req, res) => {
+    const { name, artist, cover, gencode, year, format, style } = req.body;
+    const _id = req.params.id;
 
- 
-  try {
-     const album = await AlbumModel.create({
-     userId:_id,
-      name,
-      artist,
-      cover,
-      gencode,
-      year,
-      format,
-      style, 
-     });
-    
-      res.status(200).json({
-        album
-      });     
-  }
-catch (error) {
-    return res.status(500).json(error);
-  }
-},
-  
-  deleteAlbum: async (req, res) => {
-    const id = req.params.id.replace(':',"");    
     try {
-      await AlbumModel.findOneAndRemove(
+      const album = await Album.create({
+        userId: _id,
+        name,
+        artist,
+        cover,
+        gencode,
+        year,
+        format,
+        style,
+      });
+
+      res.status(200).json({
+        album,
+      });
+    } catch (error) {
+      return res.status(500).json(error);
+    }
+  },
+
+  deleteAlbum: async (req, res) => {
+    const id = req.params.id.replace(":", "");
+    try {
+      await Album.findOneAndRemove(
         {
           _id: id,
         },
-        (err, docs) => {                 
+        (err, docs) => {
           if (!err) {
-        
-            delete docs
+            delete docs;
             res.status(200).json({ message: "Successfully deleted." });
-          }
-          else if(err){
-         
-            res.json({err});
-          }  
-          else{
+          } else if (err) {
+            res.json({ err });
+          } else {
             res.json({
-              message: "album introuva ble"
-            })
+              message: "album introuva ble",
+            });
           }
         }
       );
-
-      
     } catch (err) {
       return res.status(500).json({ message: err });
     }
-  },  
-
-}
+  },
+};
 
 module.exports = albumController;
-
