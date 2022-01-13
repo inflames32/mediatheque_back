@@ -1,5 +1,5 @@
 const UserModel = require("../models/userModel");
-const AlbumModel = require("../models/albumModel");
+const Album = require("../models/albumModel");
 
 //const validator = require("email-validator");
 const bcrypt = require("bcrypt");
@@ -16,6 +16,16 @@ const userController = {
       return res.status(500).json({ message: err });
     }
   }, */
+  disconnect: (req, res) => {
+    try {
+      req.session.destroy(() => {
+        res.redirect("/");
+      });
+    } catch (error) {
+      console.trace(error);
+      res.status(500).json(error);
+    }
+  },
 
   signup: async (req, res) => {
     try {
@@ -53,7 +63,7 @@ const userController = {
         password: await bcrypt.hash(password, salt),
       });
       await newUser.save();
-      //delete req.body;
+      delete req.body;
       console.log(res.json);
       res.status(200).json({
         newUser,
@@ -69,8 +79,7 @@ const userController = {
   login: async (req, res) => {
     try {
       const { email, password } = req.body;
-      console.log(email);
-      console.log(password);
+
       const bodyErrors = [];
       /* if (!email && !password) {
         bodyErrors.push("Votre email ou mot de passe est vide");
@@ -86,7 +95,7 @@ const userController = {
 
       await UserModel.findOne({ email }, (err, user) => {
         if (err) {
-          res.status(500).json({ message: err });
+          res.status(500).json({ message: "une erreur est survenue" });
           return;
         }
         if (user && bcrypt.compareSync(password, user.password)) {
@@ -121,20 +130,29 @@ const userController = {
     try {
       await UserModel.findByIdAndRemove(id, (err, user) => {
         if (!id) {
-          console.log("126", "ici");
           res.status(404).json("Cant find user with id " + id);
           return;
         }
         if (err) {
-          console.log("131", "ici");
           res.status(500).json({ err });
           return;
         }
         if (!user.id) {
-          console.log("136", "ici");
           res.status(404).json("Cant find user with id " + id);
           return;
         }
+        Album.find({ userId: id }, (err, albums) => {
+          if (err) {
+            res.status(500).json({ erreur });
+          }
+          if (albums) {
+            console.log(albums);
+            console.log({ albums });
+            delete album;
+            res.status(200).json({ message: "Successfully deleted.", albums });
+            return;
+          }
+        });
       });
 
       await delete user;

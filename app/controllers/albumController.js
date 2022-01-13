@@ -37,10 +37,12 @@ const albumController = {
       await Album.findById(id, (err, docs) => {
         if (!err) {
           res.json(docs);
+          return;
         }
       });
     } catch (err) {
       res.status(500).json({ message: err });
+      return;
     }
   },
 
@@ -55,6 +57,7 @@ const albumController = {
       res.status(500).json({
         message: "erreur de récupération des albums",
       });
+      return;
     }
   },
 
@@ -77,7 +80,8 @@ const albumController = {
         name: album.name,
       });
     } catch (error) {
-      return res.status(500).json(error);
+      res.status(500).json(error);
+      return;
     }
   },
 
@@ -112,16 +116,15 @@ const albumController = {
         {
           _id: id,
         },
-        (err, docs) => {
-          if (!err) {
-            delete docs;
+        (err, album) => {
+          if (err) {
+            res.status(500).json({ message: "album not found" });
+            return;
+          }
+          if (album) {
+            delete album;
             res.status(200).json({ message: "Successfully deleted." });
-          } else if (err) {
-            res.json({ err });
-          } else {
-            res.json({
-              message: "album introuva ble",
-            });
+            return;
           }
         }
       );
