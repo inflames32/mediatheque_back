@@ -1,4 +1,4 @@
-const UserModel = require("../models/userModel");
+const User = require("../models/userModel");
 const Album = require("../models/albumModel");
 
 //const validator = require("email-validator");
@@ -8,7 +8,7 @@ const userController = {
   /* getOneUser: async (req, res) => {
     try {
       const userId = req.params._id;
-      const user = await UserModel.findById({
+      const user = await User.findById({
         _id: userId,
       });
       res.json(user);
@@ -33,9 +33,10 @@ const userController = {
       console.log(req.body);
       console.log(req.body.email);
       //const bodyErrors = [];
-      await UserModel.findOne({ email }, (err, user) => {
+      await User.findOne({ email }, (err, user) => {
         if (err) {
           res.status(400).json({ errorMessage: err });
+          console.log(err);
           return;
         }
         if (password !== password_validation) {
@@ -44,21 +45,17 @@ const userController = {
             .json({ errorMessage: "les mots de passe sont différents" });
           return;
         }
-
         if (user) {
-          console.log("user.email :", user.email);
-          //bodyErrors.push("l'email existe déjà");
-          console.log("email existant");
-          res.status(400).json({
+          res.status(500).json({
             errorMessage:
-              "user in the BDD, do you want reinitize your password?",
+              "user in the BDD, do you want reinitialize your password?",
           });
           return;
         }
       });
       const saltRounds = 10;
       const salt = await bcrypt.genSaltSync(saltRounds);
-      const newUser = await UserModel.create({
+      const newUser = await User.create({
         email,
         password: await bcrypt.hash(password, salt),
       });
@@ -93,24 +90,23 @@ const userController = {
         return;
       } */
 
-      await UserModel.findOne({ email }, (err, user) => {
+      await User.findOne({ email }, (err, user) => {
         if (err) {
           res.status(500).json({ message: "une erreur est survenue" });
           return;
         }
         if (user && bcrypt.compareSync(password, user.password)) {
-          //delete req.body;
+          delete req.body;
           res.status(200).json({
             _id: user._id,
             email: user.email,
             logged: true,
             message: "vous êtes authentifié",
           });
-
           return;
         } else {
           res.status(400).json({
-            user,
+            email,
             message: "Erreur d'authentification",
             logged: false,
           });
@@ -128,31 +124,27 @@ const userController = {
     const id = req.params.id.replace(":", "");
     console.log(id);
     try {
-      await UserModel.findByIdAndRemove(id, (err, user) => {
-        if (!id) {
-          res.status(404).json("Cant find user with id " + id);
-          return;
-        }
+      await User.findByIdAndRemove(id, (err, user) => {
         if (err) {
           res.status(500).json({ err });
           return;
         }
-        if (!user.id) {
-          res.status(404).json("Cant find user with id " + id);
+        if (!user) {
+          res.status(400).json("Cant find user with id " + id);
           return;
         }
-        Album.find({ userId: id }, (err, albums) => {
-          if (err) {
-            res.status(500).json({ erreur });
-          }
-          if (albums) {
-            console.log(albums);
-            console.log({ albums });
-            delete album;
-            res.status(200).json({ message: "Successfully deleted.", albums });
-            return;
-          }
-        });
+      });
+      Album.deleteMany({ userId: id }, (err, albums) => {
+        if (err) {
+          res.status(500).json({ erreur });
+        }
+        if (albums) {
+          console.log(albums);
+          console.log({ albums });
+          delete album;
+          res.status(200).json({ message: "Successfully deleted.", albums });
+          return;
+        }
       });
 
       await delete user;
