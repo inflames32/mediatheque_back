@@ -19,55 +19,78 @@ const userController = {
   disconnect: (req, res) => {
     try {
       req.session.destroy(() => {
+        res.satuts(500).json({ message: "vous êtes déconnecté" });
         res.redirect("/");
+        return;
       });
     } catch (error) {
       console.trace(error);
-      res.status(500).json(error);
+      res.satuts(500).json({ message: "une erreur c'est produite", error });
     }
   },
 
   signup: async (req, res) => {
     try {
       const { email, password, password_validation } = req.body;
-      console.log(req.body);
-      console.log(req.body.email);
-      //const bodyErrors = [];
-      await User.findOne({ email }, (err, user) => {
-        if (err) {
-          res.status(400).json({ errorMessage: err });
-          console.log(err);
-          return;
-        }
-        if (password !== password_validation) {
-          res
-            .status(400)
-            .json({ errorMessage: "les mots de passe sont différents" });
-          return;
-        }
-        if (user) {
-          res.status(500).json({
-            errorMessage:
-              "user in the BDD, do you want reinitialize your password?",
-          });
-          return;
-        }
-      });
+      if (!email) {
+        res.status(500).json({
+          message: "entrez votre email",
+        });
+        console.log("pas de mail");
+        return;
+      }
+      if (!password) {
+        res.status(500).json({
+          message: "entrez votre mot de passe",
+        });
+        console.log("pas de mot de passe");
+        return;
+      }
+      if (!password_validation) {
+        res.status(500).json({
+          message: "entrez la validation du mot de passe",
+        });
+        console.log("entrez la validation du mot de passe");
+        return;
+      }
+      if (password !== password_validation) {
+        res.status(500).json({
+          message: "les mot de passe sont différents",
+        });
+        console.log("mots de passe différents");
+
+        return;
+      }
+
+      await User.findOne({ email });
+      /* , (err, user) => { */
+      /*  if (err) {
+        res.status(400).json({ message: err });
+        console.log(err);
+        return;
+      } */
+
+      if (email) {
+        res.status(500).json({
+          message: "utilisateur existant",
+        });
+        console.log("utilisateur existant");
+        return;
+      }
+
       const saltRounds = 10;
       const salt = await bcrypt.genSaltSync(saltRounds);
       const newUser = await User.create({
         email,
-        password: await bcrypt.hash(password, salt),
+        password: bcrypt.hash(password, salt),
       });
-      await newUser.save();
-      delete req.body;
-      console.log(res.json);
+
       res.status(200).json({
         newUser,
       });
       return;
     } catch (err) {
-      console.trace(err);
+      console.log(err);
       res.status(500).json(err);
       return;
     }
@@ -76,27 +99,44 @@ const userController = {
   login: async (req, res) => {
     try {
       const { email, password } = req.body;
-
       const bodyErrors = [];
-      /* if (!email && !password) {
-        bodyErrors.push("Votre email ou mot de passe est vide");
-      }
-      if (!password) {
-        bodyErrors.push("Entrez votre mot de passe");
+
+      if (!email || !password) {
+        bodyErrors.push("pas d'email/de mot de passe");
+        res.status(500).json({
+          message: "pas d'email/de mot de passe",
+        });
+        console.log("pas d'email/de mot de passe");
+        return;
       }
       if (bodyErrors.length) {
-        res.status(400).json(bodyErrors);
-
+        res.status(500).json({
+          message: "il y'a eu des erreurs",
+        });
         return;
-      } */
-
+      }
       await User.findOne({ email }, (err, user) => {
+        /*  if (!user) {
+          res.status(400).json({
+            message: "utilisateur introuvable",
+          });
+          console.log("utilsateur introuvable");
+          return;
+        } */
         if (err) {
-          res.status(500).json({ message: "une erreur est survenue" });
+          res.status(500).json({ message: "une erreur est survenue", err });
           return;
         }
         if (user && bcrypt.compareSync(password, user.password)) {
+          if (!password === user.password) {
+            res.status(400).json({
+              message: "mot de passe incorrect",
+            });
+            console.log("mot de passe incorrect");
+            return;
+          }
           delete req.body;
+          console.log(req.body);
           res.status(200).json({
             _id: user._id,
             email: user.email,
@@ -115,7 +155,9 @@ const userController = {
       });
     } catch (err) {
       console.trace(err);
-      res.status(400).json({ errorMessage: "une erreur c'est produite", err });
+      res
+        .status(400)
+        .json({ errorMessage: "une erreur c'est produite", message });
       return;
     }
   },
