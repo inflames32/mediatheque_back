@@ -4,7 +4,7 @@ const mongoose = require("mongoose");
 const userSchema = new mongoose.Schema({
   email: {
     type: String,
-    required: true,
+    /* required: true, */
     //required: "Please enter your email",
     // unique: true,
     /*     minLength: 3,
@@ -16,15 +16,8 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
     //required: "Please enter your password",
-    max: 1024,
-    minLength: 6,
-  },
-  password_validation: {
-    type: String,
-    //required: "Please retape your password",
-    //required: true,
-    max: 1024,
-    minLength: 6,
+    /*  max: 1024,
+    minLength: 6, */
   },
 });
 

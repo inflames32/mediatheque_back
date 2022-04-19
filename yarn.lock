@@ -3870,6 +3870,11 @@ password-prompt@^1.0.4, password-prompt@^1.0.5, password-prompt@^1.0.7, password
     ansi-escapes "^3.1.0"
     cross-spawn "^6.0.5"
 
+password-validator@^5.2.1:
+  version "5.2.1"
+  resolved "https://registry.yarnpkg.com/password-validator/-/password-validator-5.2.1.tgz#51f67c33e768acbef24d8719a52ad544f7dce004"
+  integrity sha512-EfNW0akQ+YrMawF5KNXoDBTdUvXwx2vxvIuq1XXUiDmti7aaBDnqTl/IAruxztWTCN0Bt+og3LL3I9E4blCRqQ==
+
 path-is-absolute@^1.0.0:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/path-is-absolute/-/path-is-absolute-1.0.1.tgz#174b9268735534ffbc7ace6bf53a5a9e1b5c5f5f"

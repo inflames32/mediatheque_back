@@ -1,7 +1,8 @@
 const User = require("../models/userModel");
 const Album = require("../models/albumModel");
 
-//const validator = require("email-validator");
+const validator = require("email-validator");
+const passwordValidator = require("password-validator");
 const bcrypt = require("bcrypt");
 
 const userController = {
@@ -30,71 +31,95 @@ const userController = {
   },
 
   signup: async (req, res) => {
+    const { email, password, password_validation } = req.body;
+    console.log(req.body.password);
+
+    var passwordSchema = new passwordValidator();
+
+    passwordSchema
+      .is()
+      .min(8)
+      .is()
+      .max(100)
+      .has()
+      .uppercase()
+      .has()
+      .lowercase();
+
+    console.log(passwordSchema.validate(req.body.password));
+
+    console.log("ici");
+    const bodyErrors = [];
+
     try {
-      const { email, password, password_validation } = req.body;
+      await User.find({ email }, (err, user) => {
+        if (err) {
+          res.status(500).json({ message: err });
+          return;
+        }
+        if (!email) {
+          res
+            .status(500)
+            .json({ message: `utilisateur ${user} déjà dans la bdd` });
+          console.log(user);
+          console.log("test");
+          return;
+        }
+      });
+
+      if (password !== password_validation) {
+        bodyErrors.push("mots de passe différents");
+      }
+      if (!validator.validate(email)) {
+        bodyErrors.push("l'email n'est pas bon");
+      }
       if (!email) {
-        res.status(500).json({
-          message: "entrez votre email",
-        });
-        console.log("pas de mail");
-        return;
+        bodyErrors.push("pas d'email");
       }
       if (!password) {
-        res.status(500).json({
-          message: "entrez votre mot de passe",
-        });
-        console.log("pas de mot de passe");
-        return;
+        bodyErrors.push("pas de mot de passe");
+      }
+      if (!passwordSchema.validate(password)) {
+        bodyErrors.push("mot de passe trop faible");
       }
       if (!password_validation) {
-        res.status(500).json({
-          message: "entrez la validation du mot de passe",
-        });
-        console.log("entrez la validation du mot de passe");
-        return;
+        bodyErrors.push("pas de confirmation de mot de passe");
       }
-      if (password !== password_validation) {
-        res.status(500).json({
-          message: "les mot de passe sont différents",
-        });
-        console.log("mots de passe différents");
-
-        return;
+      if (bodyErrors.length) {
+        res.json({ arrayMessagesErrors: bodyErrors });
+        return res.status(500);
       }
 
-      await User.findOne({ email });
-      /* , (err, user) => { */
-      /*  if (err) {
+      const saltRounds = 10;
+      const salt = bcrypt.genSaltSync(saltRounds);
+      console.log("là");
+      const newUser = User.create({
+        email,
+        password: await bcrypt.hash(password, salt),
+      });
+      res.status(200).json({
+        newUser,
+        message: "utilisateur créé",
+      });
+    } catch (err) {
+      console.log(err);
+      res.status(500).json({ message: err }, "erreur");
+      return;
+    }
+  },
+
+  /*  if (err) {
         res.status(400).json({ message: err });
         console.log(err);
         return;
       } */
-
-      if (email) {
+  /*   if (email) {
         res.status(500).json({
           message: "utilisateur existant",
         });
         console.log("utilisateur existant");
         return;
-      }
-
-      const saltRounds = 10;
-      const salt = await bcrypt.genSaltSync(saltRounds);
-      const newUser = await User.create({
-        email,
-        password: bcrypt.hash(password, salt),
-      });
-
-      res.status(200).json({
-        newUser,
-      });
-      return;
-    } catch (err) {
-      console.log(err);
-      res.status(500).json(err);
-      return;
-    }
-  },
+      } */
 
   login: async (req, res) => {
     try {
