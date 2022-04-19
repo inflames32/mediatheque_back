@@ -52,21 +52,6 @@ const userController = {
     const bodyErrors = [];
 
     try {
-      await User.find({ email }, (err, user) => {
-        if (err) {
-          res.status(500).json({ message: err });
-          return;
-        }
-        if (!email) {
-          res
-            .status(500)
-            .json({ message: `utilisateur ${user} déjà dans la bdd` });
-          console.log(user);
-          console.log("test");
-          return;
-        }
-      });
-
       if (password !== password_validation) {
         bodyErrors.push("mots de passe différents");
       }
